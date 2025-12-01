@@ -26,7 +26,6 @@ def get_athlete(athlete_id):
 @athlete_bp.route('/', methods=['POST'])
 def create_athlete():
     try:
-        # Валідація та завантаження вхідних даних
         athlete_data = athlete_dto.load(request.json)
     except Exception as e:
         return jsonify({'message': 'Invalid data', 'errors': str(e)}), 400
@@ -52,6 +51,5 @@ def update_athlete(athlete_id):
 @athlete_bp.route('/<int:athlete_id>', methods=['DELETE'])
 def delete_athlete(athlete_id):
     if athlete_service.delete_athlete(athlete_id):
-        # Код 204 No Content зазвичай використовується для успішного DELETE
-        return '', 204
+        return 'Deleted', 204
     return jsonify({'message': 'Athlete not found'}), 404

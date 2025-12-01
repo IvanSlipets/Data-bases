@@ -6,4 +6,4 @@ class SportDTO(BaseSchema):
     description = fields.Str(allow_none=True)
 
 class SportWithAthletesDTO(SportDTO):
-    athletes = fields.List(fields.Nested('AthleteDTO', exclude=('sport_id', 'sport')), dump_only=True)
+    athletes = fields.List(fields.Nested('AthleteDTO', exclude=('sport_id',)), dump_only=True)

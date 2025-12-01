@@ -21,4 +21,4 @@ class CompetitionWithParticipantsDTO(CompetitionDTO):
     participants = fields.List(fields.Nested('CompetitionParticipationAthleteDTO', dump_only=True))
 
 class CompetitionParticipationAthleteDTO(CompetitionParticipationDTO):
-    athlete = fields.Nested('AthleteDTO', exclude=('participations',), dump_only=True)
+    athlete = fields.Nested('AthleteDTO', dump_only=True)
