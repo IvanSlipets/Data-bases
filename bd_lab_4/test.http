@@ -1,0 +1,238 @@
+@baseUrl = http://127.0.0.1:5000
+@sportId = 2
+@athleteId = 5
+@competitionId = 5
+@participationId = 1
+@uniqueName = Fencing-{{$timestamp}}
+
+### 1. ТЕСТУВАННЯ CRUD: SPORTS
+
+### 1.1. POST: Створення нового виду спорту
+// Після успіху оновити @sportId
+POST {{baseUrl}}/api/sports/
+Content-Type: application/json
+
+{
+    "name": "{{uniqueName}}",
+    "description": "Sport with swords and protective gear."
+}
+
+### 1.2. GET: Отримати всі види спорту
+GET {{baseUrl}}/api/sports/
+Content-Type: application/json
+
+### 1.3. GET: Отримати вид спорту за ID
+GET {{baseUrl}}/api/sports/{{sportId}}
+Content-Type: application/json
+
+### 1.4. PUT: Оновлення виду спорту
+PUT {{baseUrl}}/api/sports/{{sportId}}
+Content-Type: application/json
+
+{
+    "description": "Updated: Modern fencing disciplines."
+}
+
+### 1.5. GET: Вивід виду спорту та його спортсменів (Зв'язок M:1)
+GET {{baseUrl}}/api/sports/{{sportId}}/athletes
+Content-Type: application/json
+
+### 1.6. DELETE: Видалення виду спорту
+DELETE {{baseUrl}}/api/sports/{{sportId}}
+Content-Type: application/json
+
+
+### 2. ТЕСТУВАННЯ CRUD: ATHLETES
+
+### 2.1. POST: Створення нового спортсмена
+// sport_id: використовувати існуючий ID (або оновлений @sportId)
+// Після успіху оновити @athleteId
+POST {{baseUrl}}/api/athletes/
+Content-Type: application/json
+
+{
+    "first_name": "Serhiy",
+    "last_name": "Bubka-{{$timestamp}}",
+    "birth_date": "1963-12-04",
+    "phone": "+380501234567",
+    "email": "serhiy.bubka-{{$timestamp}}@sport.ua",
+    "height_cm": 183,
+    "weight_kg": 75.5,
+    "sport_id": 10
+}
+
+### 2.2. GET: Отримати всіх спортсменів
+GET {{baseUrl}}/api/athletes/
+Content-Type: application/json
+
+### 2.3. GET: Отримати спортсмена за ID
+GET {{baseUrl}}/api/athletes/{{athleteId}}
+Content-Type: application/json
+
+### 2.4. PUT: Оновлення даних спортсмена
+PUT {{baseUrl}}/api/athletes/{{athleteId}}
+Content-Type: application/json
+
+{
+    "height_cm": 185,
+    "weight_kg": 78.0
+}
+
+### 2.5. DELETE: Видалення спортсмена
+DELETE {{baseUrl}}/api/athletes/{{athleteId}}
+Content-Type: application/json
+
+
+### 3. ТЕСТУВАННЯ CRUD: COMPETITIONS
+
+### 3.1. POST: Створення нового змагання
+// sport_id: використовувати існуючий ID
+// Після успіху оновити @competitionId
+POST {{baseUrl}}/api/competitions/
+Content-Type: application/json
+
+{
+    "name": "Spring Marathon {{$timestamp}}",
+    "location": "Kyiv",
+    "start_date": "2026-05-15",
+    "end_date": "2026-05-15",
+    "sport_id": 2
+}
+
+### 3.2. GET: Отримати всі змагання
+GET {{baseUrl}}/api/competitions/
+Content-Type: application/json
+
+### 3.3. GET: Отримати змагання за ID
+GET {{baseUrl}}/api/competitions/{{competitionId}}
+Content-Type: application/json
+
+### 3.4. PUT: Оновлення змагання
+PUT {{baseUrl}}/api/competitions/{{competitionId}}
+Content-Type: application/json
+
+{
+    "location": "Lviv"
+}
+
+### 3.5. DELETE: Видалення змагання
+DELETE {{baseUrl}}/api/competitions/{{competitionId}}
+Content-Type: application/json
+
+
+### 4. ТЕСТУВАННЯ ЗВ'ЯЗКУ M:M (CompetitionParticipation)
+
+### 4.1. POST: Додавання учасника до змагання
+// athlete_id: використовувати існуючий ID
+// competition_id: використовувати існуючий ID (або @competitionId)
+// Після успіху оновити @participationId
+POST {{baseUrl}}/api/competitions/participate
+Content-Type: application/json
+
+{
+    "athlete_id": 3,
+    "competition_id": 1,
+    "role": "Participant",
+    "result": "Did not finish"
+}
+
+### 4.2. GET: Отримати змагання та всіх його учасників
+GET {{baseUrl}}/api/competitions/{{competitionId}}/participants
+Content-Type: application/json
+
+### 4.3. PUT: Оновлення запису участі за ID
+// Оновлюємо результат спортсмена у змаганні
+PUT {{baseUrl}}/api/competitions/participate/{{participationId}}
+Content-Type: application/json
+
+{
+    "result": "Gold Medal"
+}
+
+### 4.4. DELETE: Видалення запису участі за ID
+// Видаляємо запис про участь
+DELETE {{baseUrl}}/api/competitions/participate/{{participationId}}
+Content-Type: application/json
+
+### 5. Виклик InsertAthleteNote
+POST {{baseUrl}}/api/procedures/insert_note
+Content-Type: application/json
+
+{
+    "athlete_id": 5, "note_text": "First test note", "note_date": "2025-12-08", "notes_code": "NOC-12345" 
+}
+
+### 6. Виклик ParticipateCompetitionByName
+
+POST {{baseUrl}}/api/procedures/participate_by_name
+
+Content-Type: application/json
+
+{ 
+    "first_name": "Mykola", "last_name": "Testenko", "competition_name": "World Fencing Championship", "role": "Coach", "result": "N/A" 
+}
+
+### 7. Виклик InsertBatchNotes (пакетна вставка)
+
+POST {{baseUrl}}/api/procedures/insert_batch
+
+Content-Type: application/json
+
+{}
+
+### 8. Виклик CallNotesAggregate
+
+GET	{{baseUrl}}/api/procedures/aggregate/MAX
+
+### 9. Виклик процедури з курсором SplitNotesToTimestampedTables
+
+POST {{baseUrl}}/api/procedures/split_notes
+
+Content-Type: application/json
+
+{}
+
+### 1.1. POST: Зв'язок спортсмена (Ivan Shevchenko) та добавки (Creatine Monohydrate)
+POST http://0.0.0.0:5000/api/procedures/link_athlete_supplement
+Content-Type: application/json
+
+{
+    "first_name": "Ivan",
+    "last_name": "Shevchenko",
+    "supplement_name": "Creatine Monohydrate"
+}
+
+### 1.2. POST: Вставка нової команди в таблицю teams (Завдання 1, 2a)
+POST http://0.0.0.0:5000/api/procedures/param_insert
+Content-Type: application/json
+
+{
+    "table": "teams",
+    "columns": "name, country",
+    "values": "'Ukrainian Eagles', 'Ukraine'"
+}
+
+### 1.3. POST: Вставка 10 нових страв Noname... у таблицю meals
+POST http://0.0.0.0:5000/api/procedures/insert_nonames
+Content-Type: application/json
+
+{
+    "table": "meals",
+    "prefix": "Noname",
+    "start": 120
+}
+
+### 1.4. GET: Визначення максимального ID у таблиці sports
+GET http://0.0.0.0:5000/api/procedures/sp_call_aggregate?table=sports&column=sport_id&agg=MAX
+
+### 1.5. POST: Виклик процедури поділу страв за курсором
+POST http://0.0.0.0:5000/api/procedures/split_meals_to_two
+Content-Type: application/json
+
+{}
+
+### 1.5. POST: Виклик процедури поділу страв за курсором
+POST http://0.0.0.0:5000/api/procedures/split_meals_to_two
+Content-Type: application/json
+
+{}
